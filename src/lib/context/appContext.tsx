@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { Chains } from '../chainSdkLib';
+import { Chains } from '../consts/sdk';
 
 export type Context = {
   selectedChain: Chains;

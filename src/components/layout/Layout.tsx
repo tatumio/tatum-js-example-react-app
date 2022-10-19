@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -15,6 +16,7 @@ export default function Layout({
         <Sidebar />
         {children}
       </section>
+      <Toaster />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Chains } from '@/lib/chainSdkLib';
+import { Chains } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
