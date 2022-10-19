@@ -1,3 +1,5 @@
+__**This is a WIP, stay tuned.**__
+
 # Tatum Next.js Example
 
 Next.js application.
