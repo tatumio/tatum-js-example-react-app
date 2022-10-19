@@ -19,12 +19,12 @@ const SubMenuLink = React.forwardRef<HTMLAnchorElement, SubMenuLinkProps>(
     return (
       <div
         className={clsxm(
-          'px-8 py-6 font-semibold transition-all ease-in-out hover:bg-neutral-600',
+          'flex h-10 items-center border-[1px] border-t-0 border-b-0 border-neutral-400 text-sm font-medium transition-all ease-in-out hover:bg-neutral-600',
           isActive ? 'bg-neutral-600' : ''
         )}
       >
         <Link href={href} {...nextLinkProps}>
-          <a ref={ref} {...rest} className={className}>
+          <a ref={ref} {...rest} className={clsxm(className, 'p-4')}>
             {children}
           </a>
         </Link>

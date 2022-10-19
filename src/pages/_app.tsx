@@ -4,14 +4,20 @@ import 'regenerator-runtime/runtime';
 
 import '@/styles/globals.css';
 
+import { AppContextProvider } from '@/lib/context/appContext';
+
 const NextApp = ({
   Component,
   pageProps,
 }: {
-  Component: FC<any>;
+  Component: FC<unknown>;
   pageProps: { children: ReactNode };
 }) => {
-  return <Component {...pageProps} />;
+  return (
+    <AppContextProvider>
+      <Component {...pageProps} />
+    </AppContextProvider>
+  );
 };
 
 // Retrieve application context (user and props)

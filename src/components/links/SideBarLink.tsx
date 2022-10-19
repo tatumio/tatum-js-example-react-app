@@ -21,7 +21,7 @@ const SideBarLink = React.forwardRef<HTMLAnchorElement, SideBarLinkProps>(
     return (
       <div
         className={clsxm(
-          'w-full border-l-[1px] border-r-[1px] border-transparent py-6 transition-all ease-in-out hover:border-b-[1px] hover:border-t-[1px] hover:border-neutral-400 hover:bg-neutral-600 md:border-b-[1px] md:border-t-[1px]',
+          'w-full border-l-[1px] border-r-[1px] border-transparent py-4 transition-all ease-in-out hover:border-b-[1px] hover:border-t-[1px] hover:border-neutral-400 hover:bg-neutral-600 md:border-b-[1px] md:border-t-[1px]',
           isActive
             ? 'border-t-[1px] border-neutral-400 bg-neutral-600 md:border-b-[1px]'
             : ''

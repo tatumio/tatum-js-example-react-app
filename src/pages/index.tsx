@@ -15,7 +15,13 @@ export default function HomePage() {
       <Seo />
 
       <main className='h-full w-full flex-grow overflow-y-hidden bg-white p-8'>
-        Page content goes here :)
+        <h2>Welcome,</h2>
+        <p className='md:max-w-[55%]'>
+          This example application has been built to showcase the different
+          functionalities of the Tatum JS SDK. It is using Next.js/React and the
+          Tatum-JS SDK. To start exploring you can start with the left sidebar
+          menu and click through different examples and use-cases.
+        </p>
       </main>
     </Layout>
   );

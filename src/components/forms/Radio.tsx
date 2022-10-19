@@ -12,15 +12,17 @@ type RadioProps = {
   className?: string;
   handleClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   values: radioValue[];
+  defaultValue?: string;
 };
 
 export default function Radio({
   className,
   handleClick,
+  defaultValue,
   values,
   ...rest
 }: RadioProps): JSX.Element {
-  const [selected, setSelected] = useState<string>('30 days');
+  const [selected, setSelected] = useState<string>(defaultValue ?? '');
 
   return (
     <div className={clsxm('flex flex-row gap-2', className)} {...rest}>
