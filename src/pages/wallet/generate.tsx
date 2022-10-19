@@ -5,6 +5,7 @@ import { TatumTronSDK } from '@tatumio/tron';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 
+import clsxm from '@/lib/clsxm';
 import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
 
@@ -203,7 +204,7 @@ export default function WalletGeneratePage() {
           <h4>Address from XPUB</h4>
           <form
             onSubmit={(e) => generateXpubAddress(e)}
-            className='mb-3 mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
+            className='mt-2 flex w-full flex-wrap rounded-tl-md rounded-tr-md bg-neutral-100 pt-4 pb-3'
           >
             <div className='mb-2 flex w-4/5 flex-row'>
               <div className='w-full px-3'>
@@ -231,16 +232,24 @@ export default function WalletGeneratePage() {
               <Button isLoading={xpubLoading} type='submit'>
                 Generate address
               </Button>
-              <span className='ml-4'>{xpubResponse}</span>
             </div>
           </form>
+
+          <div
+            className={clsxm(
+              'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
+              xpubResponse ? 'max-h-50' : 'max-h-0'
+            )}
+          >
+            {xpubResponse}
+          </div>
         </div>
 
         <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
           <h4>Private key from mnemonic</h4>
           <form
             onSubmit={(e) => generatePrivateKey(e)}
-            className='mb-3 mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
+            className='mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
           >
             <div className='mb-2 flex w-4/5 flex-row'>
               <div className='w-full px-3'>
@@ -262,16 +271,24 @@ export default function WalletGeneratePage() {
               <Button isLoading={privKeyLoading} type='submit'>
                 Generate private key
               </Button>
-              <span className='ml-4'>{privKeyResponse}</span>
             </div>
           </form>
+
+          <div
+            className={clsxm(
+              'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
+              privKeyResponse ? 'max-h-50' : 'max-h-0'
+            )}
+          >
+            {privKeyResponse}
+          </div>
         </div>
 
         <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
           <h4>Wallet</h4>
           <form
             onSubmit={(e) => generateWallet(e)}
-            className='mb-3 mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
+            className='mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
           >
             <div className='mb-2 flex w-full flex-row'>
               <div className='w-full px-3'>
@@ -288,9 +305,17 @@ export default function WalletGeneratePage() {
               <Button isLoading={walletLoading} type='submit'>
                 Generate wallet
               </Button>
-              <span className='ml-4'>{walletResponse}</span>
             </div>
           </form>
+
+          <div
+            className={clsxm(
+              'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
+              walletResponse ? 'max-h-50' : 'max-h-0'
+            )}
+          >
+            {walletResponse}
+          </div>
         </div>
       </main>
     </Layout>
