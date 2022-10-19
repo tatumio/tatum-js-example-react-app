@@ -19,6 +19,11 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@tatumio/btc": "2.0.1-alpha.324",
+    "@tatumio/eth": "2.0.1-alpha.324",
+    "@tatumio/polygon": "2.0.1-alpha.324",
+    "@tatumio/solana": "2.0.1-alpha.324",
+    "@tatumio/tron": "2.0.1-alpha.324",
     "clsx": "^1.1.1",
     "framer-motion": "^6.2.8",
     "next": "^12.3.1",

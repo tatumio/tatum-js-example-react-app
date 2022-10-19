@@ -8,20 +8,22 @@ import {
   useState,
 } from 'react';
 
+import { Chains } from '../chainSdkLib';
+
 export type Context = {
-  selectedChain: string;
-  setSelectedChain: Dispatch<SetStateAction<string>>;
+  selectedChain: Chains;
+  setSelectedChain: Dispatch<SetStateAction<Chains>>;
 };
 
 const TatumAppContext = createContext<Context>({
-  selectedChain: 'ETH',
+  selectedChain: Chains.Ethereum,
   setSelectedChain: () => null,
 });
 
 export const AppContextProvider: FC<{
   children: ReactNode;
 }> = (props) => {
-  const [selectedChain, setSelectedChain] = useState<string>('ETH');
+  const [selectedChain, setSelectedChain] = useState<Chains>(Chains.Ethereum);
 
   return (
     <TatumAppContext.Provider

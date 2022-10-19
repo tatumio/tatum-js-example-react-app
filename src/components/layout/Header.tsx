@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Chains } from '@/lib/chainSdkLib';
 import { useSelectedChain } from '@/lib/context/appContext';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
@@ -29,7 +30,7 @@ export default function Header(): JSX.Element {
               e: React.MouseEvent<HTMLButtonElement, MouseEvent>
             ) => {
               const chain = (e.target as HTMLButtonElement).innerHTML;
-              setSelectedChain(chain);
+              setSelectedChain(chain as Chains);
             }}
             defaultValue={selectedChain}
           />
