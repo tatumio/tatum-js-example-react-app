@@ -1,5 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import singletonRouter from 'next/router';
+import { render, screen } from '@testing-library/react';
 import mockRouter from 'next-router-mock';
 import React from 'react';
 
