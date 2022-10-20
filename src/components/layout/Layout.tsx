@@ -16,7 +16,14 @@ export default function Layout({
         <Sidebar />
         {children}
       </section>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          style: {
+            wordBreak: 'break-all',
+            maxWidth: 500,
+          },
+        }}
+      />
     </>
   );
 }

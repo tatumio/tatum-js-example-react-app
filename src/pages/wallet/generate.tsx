@@ -1,6 +1,7 @@
 import { TatumBtcSDK } from '@tatumio/btc';
 import { TatumEthSDK } from '@tatumio/eth';
 import { TatumPolygonSDK } from '@tatumio/polygon';
+import { TatumSolanaSDK } from '@tatumio/solana';
 import { TatumTronSDK } from '@tatumio/tron';
 import * as React from 'react';
 import toast from 'react-hot-toast';
@@ -32,6 +33,8 @@ export default function WalletGeneratePage() {
     i: 0,
     pk_mnemonic: '',
     wallet_mnemonic: '',
+    solana_mnemonic: '',
+    solana_privateKey: '',
   });
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -68,23 +71,36 @@ export default function WalletGeneratePage() {
           );
           break;
         case Chains.Solana:
-          // @todo: Solana needs UI changes
-          response = null;
-          toast.error('Solana does not support address generation from XPUB!');
-          return;
+          response = TatumSolanaSDK(
+            SDKOptions
+          ).wallet.generateAddressFromMnemonic(
+            formData.solana_mnemonic,
+            formData.i
+          );
+          break;
         case Chains.Tron:
           response = TatumTronSDK(SDKOptions).wallet.generateAddressFromXPub(
             formData.xpub,
             formData.i
           );
+          break;
       }
     } catch (e) {
-      if (e instanceof Error) toast.error(e?.message);
+      if (e instanceof Error) {
+        if (JSON.parse(e?.message)?.message) {
+          toast.error(JSON.parse(e.message).message);
+        } else {
+          toast.error(e?.message);
+        }
+      }
       setXpubLoading(false);
       return;
     }
 
-    if (response) setXpubResponse(response);
+    if (response)
+      setXpubResponse(
+        typeof response !== 'string' ? JSON.stringify(response) : response
+      );
     setXpubLoading(false);
     toast.success('Generated address successfuly!');
   };
@@ -122,8 +138,6 @@ export default function WalletGeneratePage() {
           );
           break;
         case Chains.Solana:
-          // @todo: Solana needs UI changes
-          response = null;
           toast.error(
             'Solana does not support privateKey generation from mnemonic!'
           );
@@ -135,9 +149,16 @@ export default function WalletGeneratePage() {
             formData.pk_mnemonic,
             formData.i
           );
+          break;
       }
     } catch (e) {
-      if (e instanceof Error) toast.error(e?.message);
+      if (e instanceof Error) {
+        if (JSON.parse(e?.message)?.message) {
+          toast.error(JSON.parse(e.message).message);
+        } else {
+          toast.error(e?.message);
+        }
+      }
       setPrivKeyLoading(false);
       return;
     }
@@ -171,19 +192,24 @@ export default function WalletGeneratePage() {
           );
           break;
         case Chains.Solana:
-          // @todo: Solana needs UI changes
-          response = null;
-          toast.error(
-            'Solana does not support wallet generation from mnemonic!'
+          response = TatumSolanaSDK(SDKOptions).wallet.wallet(
+            formData.solana_privateKey || undefined
           );
-          return;
+          break;
         case Chains.Tron:
           response = await TatumTronSDK(SDKOptions).wallet.generateWallet(
             formData.wallet_mnemonic
           );
+          break;
       }
     } catch (e) {
-      if (e instanceof Error) toast.error(e?.message);
+      if (e instanceof Error) {
+        if (JSON.parse(e?.message)?.message) {
+          toast.error(JSON.parse(e.message).message);
+        } else {
+          toast.error(e?.message);
+        }
+      }
       setWalletLoading(false);
       return;
     }
@@ -201,20 +227,32 @@ export default function WalletGeneratePage() {
         <WalletSubMenu />
 
         <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
-          <h4>Address from XPUB</h4>
+          <h4>
+            Address from {selectedChain === Chains.Solana ? 'Mnemonic' : 'XPUB'}
+          </h4>
           <form
             onSubmit={(e) => generateXpubAddress(e)}
             className='mt-2 flex w-full flex-wrap rounded-tl-md rounded-tr-md bg-neutral-100 pt-4 pb-3'
           >
             <div className='mb-2 flex w-4/5 flex-row'>
               <div className='w-full px-3'>
-                <Input
-                  required
-                  inputType='text'
-                  placeholder='XPUB'
-                  name='xpub'
-                  onChange={(e) => handleInputChange(e)}
-                />
+                {selectedChain === Chains.Solana ? (
+                  <Input
+                    required
+                    inputType='text'
+                    placeholder='MNEMONIC PHRASE'
+                    name='solana_mnemonic'
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                ) : (
+                  <Input
+                    required
+                    inputType='text'
+                    placeholder='XPUB'
+                    name='xpub'
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                )}
               </div>
             </div>
             <div className='mb-2 flex w-1/5 flex-row'>
@@ -245,44 +283,46 @@ export default function WalletGeneratePage() {
           </div>
         </div>
 
-        <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
-          <h4>Private key from mnemonic</h4>
-          <form
-            onSubmit={(e) => generatePrivateKey(e)}
-            className='mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
-          >
-            <div className='mb-2 flex w-4/5 flex-row'>
-              <div className='w-full px-3'>
-                <Input
-                  required
-                  inputType='text'
-                  placeholder='MNEMONIC PHRASE'
-                  name='pk_mnemonic'
-                  onChange={(e) => handleInputChange(e)}
-                />
+        {selectedChain !== Chains.Solana && (
+          <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
+            <h4>Private key from mnemonic</h4>
+            <form
+              onSubmit={(e) => generatePrivateKey(e)}
+              className='mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
+            >
+              <div className='mb-2 flex w-4/5 flex-row'>
+                <div className='w-full px-3'>
+                  <Input
+                    required
+                    inputType='text'
+                    placeholder='MNEMONIC PHRASE'
+                    name='pk_mnemonic'
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                </div>
               </div>
-            </div>
-            <div className='mb-2 flex w-1/5 flex-row'>
-              <div className='w-full px-3'>
-                <Input required inputType='text' placeholder='INDEX' />
+              <div className='mb-2 flex w-1/5 flex-row'>
+                <div className='w-full px-3'>
+                  <Input required inputType='text' placeholder='INDEX' />
+                </div>
               </div>
-            </div>
-            <div className='flex w-full flex-row items-center justify-start px-3'>
-              <Button isLoading={privKeyLoading} type='submit'>
-                Generate private key
-              </Button>
-            </div>
-          </form>
+              <div className='flex w-full flex-row items-center justify-start px-3'>
+                <Button isLoading={privKeyLoading} type='submit'>
+                  Generate private key
+                </Button>
+              </div>
+            </form>
 
-          <div
-            className={clsxm(
-              'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-              privKeyResponse ? 'max-h-50' : 'max-h-0'
-            )}
-          >
-            {privKeyResponse}
+            <div
+              className={clsxm(
+                'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
+                privKeyResponse ? 'max-h-50' : 'max-h-0'
+              )}
+            >
+              {privKeyResponse}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
           <h4>Wallet</h4>
@@ -292,13 +332,21 @@ export default function WalletGeneratePage() {
           >
             <div className='mb-2 flex w-full flex-row'>
               <div className='w-full px-3'>
-                <Input
-                  required
-                  inputType='text'
-                  placeholder='MNEMONIC PHRASE'
-                  name='wallet_mnemonic'
-                  onChange={(e) => handleInputChange(e)}
-                />
+                {selectedChain === Chains.Solana ? (
+                  <Input
+                    inputType='text'
+                    placeholder='PRIVATE KEY'
+                    name='solana_privateKey'
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                ) : (
+                  <Input
+                    inputType='text'
+                    placeholder='MNEMONIC PHRASE'
+                    name='wallet_mnemonic'
+                    onChange={(e) => handleInputChange(e)}
+                  />
+                )}
               </div>
             </div>
             <div className='flex w-full flex-row items-center justify-start px-3'>
