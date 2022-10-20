@@ -350,7 +350,7 @@ export default function WalletInfoPage() {
         )}
 
         <div className='layout mb-8 flex flex-col items-baseline justify-start text-left text-black'>
-          <h4>Wallet</h4>
+          <h4>Get account balance</h4>
           <form
             onSubmit={(e) => getAccountBalance(e)}
             className='mt-2 flex w-full flex-wrap rounded-md bg-neutral-100 pt-4 pb-3'
