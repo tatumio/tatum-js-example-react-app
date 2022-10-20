@@ -11,7 +11,7 @@ type InputProps = {
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, hasBtn, inputType, ...rest }, ref): JSX.Element => {
     return (
-      <label className='text-gray-500'>
+      <label className='font-semibold text-gray-400'>
         {rest?.placeholder}
         {rest?.placeholder && rest?.required ? (
           <span className='ml-2 text-[red]'>*</span>
