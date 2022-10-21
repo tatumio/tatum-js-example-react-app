@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import clsxm from '@/lib/clsxm';
 import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
+import { handleInputChange } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Input from '@/components/forms/Input';
@@ -38,13 +39,6 @@ export default function WalletInfoPage() {
     txHash: '',
     accountAddress: '',
   });
-
-  const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: (e.target as HTMLInputElement).value,
-    });
-  };
 
   const getCurrentBlock = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -282,7 +276,7 @@ export default function WalletInfoPage() {
                       ? 'solana_blockHeight'
                       : 'blockHash'
                   }
-                  onChange={(e) => handleInputChange(e)}
+                  onChange={(e) => handleInputChange(e, setFormData, formData)}
                 />
               </div>
             </div>
@@ -327,7 +321,9 @@ export default function WalletInfoPage() {
                     inputType='text'
                     placeholder='TRANSACTION ADDRESS'
                     name='txHash'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 </div>
               </div>
@@ -362,7 +358,7 @@ export default function WalletInfoPage() {
                   required
                   placeholder='ACCOUNT ADDRESS'
                   name='accountAddress'
-                  onChange={(e) => handleInputChange(e)}
+                  onChange={(e) => handleInputChange(e, setFormData, formData)}
                 />
               </div>
             </div>

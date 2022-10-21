@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import clsxm from '@/lib/clsxm';
 import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
+import { handleInputChange } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Input from '@/components/forms/Input';
@@ -34,13 +35,6 @@ export default function WalletTransactionsPage() {
     txData: '',
     signatureId: '',
   });
-
-  const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: (e.target as HTMLInputElement).value,
-    });
-  };
 
   const sendTransfer = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -212,7 +206,9 @@ export default function WalletTransactionsPage() {
                     inputType='text'
                     placeholder='SENDER ADDRESS'
                     name='from'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 </div>
               </div>
@@ -234,7 +230,7 @@ export default function WalletTransactionsPage() {
                   inputType='text'
                   placeholder='RECEIVING ADDRESS'
                   name='to'
-                  onChange={(e) => handleInputChange(e)}
+                  onChange={(e) => handleInputChange(e, setFormData, formData)}
                 />
               </div>
             </div>
@@ -246,7 +242,7 @@ export default function WalletTransactionsPage() {
                   inputType='text'
                   placeholder='PRIVATE KEY'
                   name='fromPrivateKey'
-                  onChange={(e) => handleInputChange(e)}
+                  onChange={(e) => handleInputChange(e, setFormData, formData)}
                 />
               </div>
             </div>
@@ -260,7 +256,7 @@ export default function WalletTransactionsPage() {
                   }
                   placeholder='AMOUNT'
                   name={selectedChain === Chains.Bitcoin ? 'value' : 'amount'}
-                  onChange={(e) => handleInputChange(e)}
+                  onChange={(e) => handleInputChange(e, setFormData, formData)}
                 />
               </div>
             </div>
@@ -296,7 +292,9 @@ export default function WalletTransactionsPage() {
                     inputType='text'
                     placeholder='TX DATA'
                     name='txData'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 </div>
               </div>
@@ -307,7 +305,9 @@ export default function WalletTransactionsPage() {
                       inputType='text'
                       placeholder='SIGNATURE ID'
                       name='signatureId'
-                      onChange={(e) => handleInputChange(e)}
+                      onChange={(e) =>
+                        handleInputChange(e, setFormData, formData)
+                      }
                     />
                   </div>
                 </div>

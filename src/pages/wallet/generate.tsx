@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import clsxm from '@/lib/clsxm';
 import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
+import { handleInputChange } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Input from '@/components/forms/Input';
@@ -36,13 +37,6 @@ export default function WalletGeneratePage() {
     solana_mnemonic: '',
     solana_privateKey: '',
   });
-
-  const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: (e.target as HTMLInputElement).value,
-    });
-  };
 
   const generateXpubAddress = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -242,7 +236,9 @@ export default function WalletGeneratePage() {
                     inputType='text'
                     placeholder='MNEMONIC PHRASE'
                     name='solana_mnemonic'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 ) : (
                   <Input
@@ -250,7 +246,9 @@ export default function WalletGeneratePage() {
                     inputType='text'
                     placeholder='XPUB'
                     name='xpub'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 )}
               </div>
@@ -262,7 +260,7 @@ export default function WalletGeneratePage() {
                   inputType='text'
                   placeholder='INDEX'
                   name='i'
-                  onChange={(e) => handleInputChange(e)}
+                  onChange={(e) => handleInputChange(e, setFormData, formData)}
                 />
               </div>
             </div>
@@ -297,7 +295,9 @@ export default function WalletGeneratePage() {
                     inputType='text'
                     placeholder='MNEMONIC PHRASE'
                     name='pk_mnemonic'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 </div>
               </div>
@@ -337,14 +337,18 @@ export default function WalletGeneratePage() {
                     inputType='text'
                     placeholder='PRIVATE KEY'
                     name='solana_privateKey'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 ) : (
                   <Input
                     inputType='text'
                     placeholder='MNEMONIC PHRASE'
                     name='wallet_mnemonic'
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
                   />
                 )}
               </div>
