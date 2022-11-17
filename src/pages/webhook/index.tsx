@@ -1,14 +1,10 @@
-import { TatumBtcSDK } from '@tatumio/btc';
 import { TatumEthSDK } from '@tatumio/eth';
-import { TatumPolygonSDK } from '@tatumio/polygon';
-import { TatumSolanaSDK } from '@tatumio/solana';
-import { TatumTronSDK } from '@tatumio/tron';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
 import { Column } from 'react-table';
 
-import { Chains, SDKOptions } from '@/lib/consts/sdk';
+import { SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
 import { handleInputChange } from '@/lib/utils';
 
@@ -37,6 +33,9 @@ export default function WebhookPage() {
   const [createLoading, setCreateLoading] = React.useState(false);
   const [createResponse, setCreateResponse] = React.useState('');
 
+  const [hmacLoading, setHmacLoading] = React.useState(false);
+
+  // Setup data and columns for subscriptions table
   const [subscriptions, setSubscriptions] = React.useState<string[]>([]);
   const subscriptionsColumns = React.useMemo<Column[]>(
     () => [
@@ -56,36 +55,12 @@ export default function WebhookPage() {
     []
   );
 
+  // Get subscriptions data for the table
   const getSubscriptions = React.useCallback(
     async (pageIndex: number, pageSize: number) => {
-      let response;
-      switch (selectedChain) {
-        case Chains.Ethereum:
-          response = await TatumEthSDK(
-            SDKOptions
-          ).subscriptions.getSubscriptions(pageSize, pageIndex);
-          break;
-        case Chains.Polygon:
-          response = await TatumPolygonSDK(
-            SDKOptions
-          ).subscriptions.getSubscriptions(pageSize, pageIndex);
-          break;
-        case Chains.Bitcoin:
-          response = await TatumBtcSDK(
-            SDKOptions
-          ).subscriptions.getSubscriptions(pageSize, pageIndex);
-          break;
-        case Chains.Solana:
-          response = await TatumSolanaSDK(
-            SDKOptions
-          ).subscriptions.getSubscriptions(pageSize, pageIndex);
-          break;
-        case Chains.Tron:
-          response = await TatumTronSDK(
-            SDKOptions
-          ).subscriptions.getSubscriptions(pageSize, pageIndex);
-          break;
-      }
+      const response = await TatumEthSDK(
+        SDKOptions
+      ).subscriptions.getSubscriptions(pageSize, pageIndex);
 
       setSubscriptions(
         response.map((r) => {
@@ -94,13 +69,55 @@ export default function WebhookPage() {
         })
       );
     },
-    [selectedChain]
+    []
   );
 
-  React.useEffect(() => {
-    getSubscriptions(0, 10);
-  }, [getSubscriptions]);
+  // Setup data and columns for webhook table
+  const [webhooks, setWebhooks] = React.useState<string[]>([]);
+  const webhookColumns = React.useMemo<Column[]>(
+    () => [
+      {
+        Header: 'ID',
+        accessor: 'id',
+      },
+      {
+        Header: 'Type',
+        accessor: 'type',
+      },
+      {
+        Header: 'URL',
+        accessor: 'url',
+      },
+      {
+        Header: 'Data',
+        accessor: 'data',
+      },
+      {
+        Header: 'Time',
+        accessor: 'timestamp',
+      },
+    ],
+    []
+  );
 
+  // Get webhook data for the table
+  const getWebhooks = React.useCallback(
+    async (pageIndex: number, pageSize: number) => {
+      const response = await TatumEthSDK(
+        SDKOptions
+      ).subscriptions.getAllWebhooks(pageSize, pageIndex);
+
+      setWebhooks(
+        response.map((r) => {
+          r.data = JSON.stringify(r.data);
+          return r as unknown as string;
+        })
+      );
+    },
+    []
+  );
+
+  // Setup base form data
   const [formData, setFormData] = React.useState<{
     type: subscriptionType;
     id: string;
@@ -109,6 +126,7 @@ export default function WebhookPage() {
     interval: number;
     limit: string;
     address: string;
+    hmacSecret: string;
   }>({
     type: 'ADDRESS_TRANSACTION',
     id: '',
@@ -117,8 +135,10 @@ export default function WebhookPage() {
     interval: 0,
     limit: '',
     address: '',
+    hmacSecret: '',
   });
 
+  // Subscription types
   const subscriptionTypes: {
     value: subscriptionType;
     label: subscriptionType;
@@ -147,6 +167,7 @@ export default function WebhookPage() {
     },
   ];
 
+  // Handle type change
   const handleSelectChange = (
     e: {
       value: string;
@@ -156,6 +177,54 @@ export default function WebhookPage() {
     if (e) setFormData({ ...formData, type: e.value as subscriptionType });
   };
 
+  // Enable HMAC call
+  const enableHmac = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setHmacLoading(true);
+
+    try {
+      await TatumEthSDK(SDKOptions).subscriptions.enableWebHookHmac({
+        hmacSecret: formData.hmacSecret,
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        if (JSON.parse(err?.message)?.message) {
+          toast.error(JSON.parse(err.message).message);
+        } else {
+          toast.error(err?.message);
+        }
+      }
+      setHmacLoading(false);
+      return;
+    }
+
+    setHmacLoading(false);
+    toast.success('HMAC digest enabled!');
+  };
+
+  // Disable HMAC Call
+  const disableHmac = async () => {
+    setHmacLoading(true);
+
+    try {
+      await TatumEthSDK(SDKOptions).subscriptions.disableWebHookHmac();
+    } catch (err) {
+      if (err instanceof Error) {
+        if (JSON.parse(err?.message)?.message) {
+          toast.error(JSON.parse(err.message).message);
+        } else {
+          toast.error(err?.message);
+        }
+      }
+      setHmacLoading(false);
+      return;
+    }
+
+    setHmacLoading(false);
+    toast.success('HMAC digest disabled!');
+  };
+
+  // Register a new webhook call
   const registerWebhook = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCreateLoading(true);
@@ -272,12 +341,12 @@ export default function WebhookPage() {
           });
           break;
       }
-    } catch (e) {
-      if (e instanceof Error) {
-        if (JSON.parse(e?.message)?.message) {
-          toast.error(JSON.parse(e.message).message);
+    } catch (err) {
+      if (err instanceof Error) {
+        if (JSON.parse(err?.message)?.message) {
+          toast.error(JSON.parse(err.message).message);
         } else {
-          toast.error(e?.message);
+          toast.error(err?.message);
         }
       }
       setCreateLoading(false);
@@ -451,12 +520,61 @@ export default function WebhookPage() {
         </div>
 
         <div className='layout mb-8 mt-8 flex flex-col items-baseline justify-start text-left text-black'>
+          <h4>HMAC Secret Digest</h4>
+          <form
+            onSubmit={(e) => enableHmac(e)}
+            className='mt-2 flex w-full flex-wrap rounded-tl-md rounded-tr-md bg-neutral-100 pt-4 pb-3'
+          >
+            <div className='mb-2 flex w-full flex-row'>
+              <div className='w-full px-3'>
+                <label className='font-semibold text-gray-400'>
+                  <Input
+                    required
+                    inputType='text'
+                    placeholder='HMAC SECRET'
+                    name='hmacSecret'
+                    onChange={(e) =>
+                      handleInputChange(e, setFormData, formData)
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className='flex w-full flex-row items-center justify-start px-3'>
+              <Button isLoading={hmacLoading} type='submit'>
+                Enable HMAC
+              </Button>
+              <Button
+                onClick={() => disableHmac()}
+                variant='outline'
+                className='ml-2'
+              >
+                Disable HMAC
+              </Button>
+            </div>
+          </form>
+
+          <ResponseBox>{createResponse}</ResponseBox>
+        </div>
+
+        <div className='layout mb-8 mt-8 flex flex-col items-baseline justify-start text-left text-black'>
           <h4>List all active subscriptions</h4>
 
           <Table
             onFetch={getSubscriptions}
             columns={subscriptionsColumns}
             data={subscriptions}
+          />
+        </div>
+
+        <div className='layout mb-8 mt-8 flex flex-col items-baseline justify-start text-left text-black'>
+          <h4>List all executed webhooks</h4>
+
+          <Table
+            onFetch={getWebhooks}
+            columns={webhookColumns}
+            data={webhooks}
           />
         </div>
       </main>
