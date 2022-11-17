@@ -6,11 +6,11 @@ import { TatumTronSDK } from '@tatumio/tron';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 
-import clsxm from '@/lib/clsxm';
 import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
 import { handleInputChange } from '@/lib/utils';
 
+import ResponseBox from '@/components/boxes/ResponseBox';
 import Button from '@/components/buttons/Button';
 import Input from '@/components/forms/Input';
 import Layout from '@/components/layout/Layout';
@@ -271,14 +271,7 @@ export default function WalletGeneratePage() {
             </div>
           </form>
 
-          <div
-            className={clsxm(
-              'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-              xpubResponse ? 'max-h-50' : 'max-h-0'
-            )}
-          >
-            {xpubResponse}
-          </div>
+          <ResponseBox>{xpubResponse}</ResponseBox>
         </div>
 
         {selectedChain !== Chains.Solana && (
@@ -313,14 +306,7 @@ export default function WalletGeneratePage() {
               </div>
             </form>
 
-            <div
-              className={clsxm(
-                'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-                privKeyResponse ? 'max-h-50' : 'max-h-0'
-              )}
-            >
-              {privKeyResponse}
-            </div>
+            <ResponseBox>{privKeyResponse}</ResponseBox>
           </div>
         )}
 
@@ -360,14 +346,7 @@ export default function WalletGeneratePage() {
             </div>
           </form>
 
-          <div
-            className={clsxm(
-              'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-              walletResponse ? 'max-h-50' : 'max-h-0'
-            )}
-          >
-            {walletResponse}
-          </div>
+          <ResponseBox>{walletResponse}</ResponseBox>
         </div>
       </main>
     </Layout>

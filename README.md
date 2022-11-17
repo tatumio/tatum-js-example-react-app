@@ -13,6 +13,7 @@ yarn
 ```
 
 ### 2. Create .env file and add your Tatum API KEY
+
 Navigate to the root folder of the project and create an .env file with the TATUM_API_KEY environment variable.
 
 ```sh
@@ -33,21 +34,24 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Deployment (heroku)
 
-1. Create a Heroku application  
+1. Create a Heroku application
+
 ```sh
 heroku create $APP_NAME
 ```
-  
-2. Set your Heroku environment variables  
+
+2. Set your Heroku environment variables
+
 ```sh
 heroku config:set TATUM_API_KEY=$YOUR_API_KEY
 ```
-  
-3. Push the repository to Heroku  
+
+3. Push the repository to Heroku
+
 ```sh
 git push heroku [$YOUR_BRANCH_NAME]:master
 ```
-  
+
 **You're good to go live!**
 
 ---

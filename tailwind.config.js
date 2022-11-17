@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       transitionProperty: {
-        'max-height': 'max-height'
+        'max-height': 'max-height',
       },
       fontFamily: {
         primary: ['Raleway', ...fontFamily.sans],
@@ -63,5 +63,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [require('@tailwindcss/forms'), require('tailwind-scrollbar')],
 };

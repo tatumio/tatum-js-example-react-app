@@ -1,17 +1,23 @@
+import { TatumBtcSDK } from '@tatumio/btc';
 import { TatumEthSDK } from '@tatumio/eth';
+import { TatumPolygonSDK } from '@tatumio/polygon';
+import { TatumSolanaSDK } from '@tatumio/solana';
+import { TatumTronSDK } from '@tatumio/tron';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
+import { Column } from 'react-table';
 
-import clsxm from '@/lib/clsxm';
-import { SDKOptions } from '@/lib/consts/sdk';
+import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
 import { handleInputChange } from '@/lib/utils';
 
+import ResponseBox from '@/components/boxes/ResponseBox';
 import Button from '@/components/buttons/Button';
 import Input from '@/components/forms/Input';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
+import Table from '@/components/Table';
 
 type subscriptionType =
   | 'ADDRESS_TRANSACTION'
@@ -31,6 +37,70 @@ export default function WebhookPage() {
   const [createLoading, setCreateLoading] = React.useState(false);
   const [createResponse, setCreateResponse] = React.useState('');
 
+  const [subscriptions, setSubscriptions] = React.useState<string[]>([]);
+  const subscriptionsColumns = React.useMemo<Column[]>(
+    () => [
+      {
+        Header: 'ID',
+        accessor: 'id',
+      },
+      {
+        Header: 'Type',
+        accessor: 'type',
+      },
+      {
+        Header: 'Attributes',
+        accessor: 'attr',
+      },
+    ],
+    []
+  );
+
+  const getSubscriptions = React.useCallback(
+    async (pageIndex: number, pageSize: number) => {
+      let response;
+      switch (selectedChain) {
+        case Chains.Ethereum:
+          response = await TatumEthSDK(
+            SDKOptions
+          ).subscriptions.getSubscriptions(pageSize, pageIndex);
+          break;
+        case Chains.Polygon:
+          response = await TatumPolygonSDK(
+            SDKOptions
+          ).subscriptions.getSubscriptions(pageSize, pageIndex);
+          break;
+        case Chains.Bitcoin:
+          response = await TatumBtcSDK(
+            SDKOptions
+          ).subscriptions.getSubscriptions(pageSize, pageIndex);
+          break;
+        case Chains.Solana:
+          response = await TatumSolanaSDK(
+            SDKOptions
+          ).subscriptions.getSubscriptions(pageSize, pageIndex);
+          break;
+        case Chains.Tron:
+          response = await TatumTronSDK(
+            SDKOptions
+          ).subscriptions.getSubscriptions(pageSize, pageIndex);
+          break;
+      }
+
+      setSubscriptions(
+        response.map((r) => {
+          r.attr = JSON.stringify(r.attr);
+          return r as unknown as string;
+        })
+      );
+    },
+    [selectedChain]
+  );
+
+  React.useEffect(() => {
+    getSubscriptions(0, 10);
+  }, [getSubscriptions]);
+
   const [formData, setFormData] = React.useState<{
     type: subscriptionType;
     id: string;
@@ -42,7 +112,7 @@ export default function WebhookPage() {
   }>({
     type: 'ADDRESS_TRANSACTION',
     id: '',
-    url: '',
+    url: 'https://dashboard.tatum.io/webhook-handler',
     typeOfBalance: 'account',
     interval: 0,
     limit: '',
@@ -264,6 +334,7 @@ export default function WebhookPage() {
                     inputType='text'
                     placeholder='URL'
                     name='url'
+                    value={formData.url}
                     onChange={(e) =>
                       handleInputChange(e, setFormData, formData)
                     }
@@ -376,14 +447,17 @@ export default function WebhookPage() {
             </div>
           </form>
 
-          <div
-            className={clsxm(
-              'flex w-full max-w-full flex-col items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-              createResponse ? 'max-h-50' : 'max-h-0'
-            )}
-          >
-            {createResponse}
-          </div>
+          <ResponseBox>{createResponse}</ResponseBox>
+        </div>
+
+        <div className='layout mb-8 mt-8 flex flex-col items-baseline justify-start text-left text-black'>
+          <h4>List all active subscriptions</h4>
+
+          <Table
+            onFetch={getSubscriptions}
+            columns={subscriptionsColumns}
+            data={subscriptions}
+          />
         </div>
       </main>
     </Layout>

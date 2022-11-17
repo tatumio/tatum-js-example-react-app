@@ -11,6 +11,7 @@ import { Chains, SDKOptions } from '@/lib/consts/sdk';
 import { useSelectedChain } from '@/lib/context/appContext';
 import { handleInputChange } from '@/lib/utils';
 
+import ResponseBox from '@/components/boxes/ResponseBox';
 import Button from '@/components/buttons/Button';
 import Input from '@/components/forms/Input';
 import Layout from '@/components/layout/Layout';
@@ -271,14 +272,7 @@ export default function WalletTransactionsPage() {
             </div>
           </form>
 
-          <div
-            className={clsxm(
-              'flex w-full max-w-full flex-col items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-              transferResponse ? 'max-h-50' : 'max-h-0'
-            )}
-          >
-            {transferResponse ? `Block: ${transferResponse}` : ''}
-          </div>
+          <ResponseBox>{transferResponse}</ResponseBox>
         </div>
 
         {selectedChain !== Chains.Solana && (
@@ -322,14 +316,7 @@ export default function WalletTransactionsPage() {
               </div>
             </form>
 
-            <div
-              className={clsxm(
-                'flex w-full items-center rounded-bl-md rounded-br-md bg-zinc-900 px-4 py-2 text-white transition-max-height duration-300 ease-in-out',
-                broadcastResponse ? 'max-h-50' : 'max-h-0'
-              )}
-            >
-              {broadcastResponse}
-            </div>
+            <ResponseBox>{broadcastResponse}</ResponseBox>
           </div>
         )}
       </main>
