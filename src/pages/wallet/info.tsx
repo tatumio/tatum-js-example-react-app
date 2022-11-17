@@ -49,7 +49,9 @@ export default function WalletInfoPage() {
     try {
       switch (selectedChain) {
         case Chains.Ethereum:
-          response = await TatumEthSDK(SDKOptions).blockchain.getCurrentBlock();
+          response = await TatumEthSDK(SDKOptions).blockchain.getCurrentBlock(
+            'ethereum-sepolia'
+          );
           break;
         case Chains.Polygon:
           response = await TatumPolygonSDK(
@@ -96,7 +98,8 @@ export default function WalletInfoPage() {
       switch (selectedChain) {
         case Chains.Ethereum:
           response = await TatumEthSDK(SDKOptions).blockchain.getBlock(
-            formData.blockHash
+            formData.blockHash,
+            'ethereum-sepolia'
           );
           break;
         case Chains.Polygon:
@@ -149,14 +152,14 @@ export default function WalletInfoPage() {
     try {
       switch (selectedChain) {
         case Chains.Ethereum:
-          response = await TatumEthSDK(SDKOptions).blockchain.get(
+          response = await TatumEthSDK(SDKOptions).blockchain.getTransaction(
             formData.txHash
           );
           break;
         case Chains.Polygon:
-          response = await TatumPolygonSDK(SDKOptions).blockchain.get(
-            formData.txHash
-          );
+          response = await TatumPolygonSDK(
+            SDKOptions
+          ).blockchain.getTransaction(formData.txHash);
           break;
         case Chains.Bitcoin:
           response = await TatumBtcSDK(SDKOptions).blockchain.getTransaction(

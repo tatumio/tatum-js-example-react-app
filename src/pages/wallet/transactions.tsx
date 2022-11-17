@@ -47,43 +47,44 @@ export default function WalletTransactionsPage() {
         case Chains.Ethereum:
           response = await TatumEthSDK(
             SDKOptions
-          ).blockchain.blockchainTransfer({
+          ).transaction.send.transferSignedTransaction({
             to: formData.to,
             fromPrivateKey: formData.fromPrivateKey,
             amount: formData.amount,
-            currency: 'ETH',
           });
           break;
         case Chains.Polygon:
           response = await TatumPolygonSDK(
             SDKOptions
-          ).blockchain.blockchainTransfer({
+          ).transaction.send.transferSignedTransaction({
             to: formData.to,
             fromPrivateKey: formData.fromPrivateKey,
             amount: formData.amount,
-            currency: 'MATIC',
           });
           break;
         case Chains.Bitcoin:
-          response = await TatumBtcSDK(SDKOptions).blockchain.sendTransaction({
-            fromAddress: [
-              {
-                address: formData.from,
-                privateKey: formData.fromPrivateKey,
-              },
-            ],
-            to: [
-              {
-                address: formData.to,
-                value: formData.value,
-              },
-            ],
-          });
+          response = await TatumBtcSDK(SDKOptions).transaction.sendTransaction(
+            {
+              fromAddress: [
+                {
+                  address: formData.from,
+                  privateKey: formData.fromPrivateKey,
+                },
+              ],
+              to: [
+                {
+                  address: formData.to,
+                  value: formData.value,
+                },
+              ],
+            },
+            { testnet: true }
+          );
           break;
         case Chains.Solana:
           response = await TatumSolanaSDK(
             SDKOptions
-          ).blockchain.sendTransaction({
+          ).transaction.send.transferSignedTransaction({
             from: formData.from,
             to: formData.to,
             amount: formData.amount,
@@ -91,7 +92,9 @@ export default function WalletTransactionsPage() {
           });
           break;
         case Chains.Tron:
-          response = TatumTronSDK(SDKOptions).blockchain.sendTransaction({
+          response = TatumTronSDK(
+            SDKOptions
+          ).transaction.send.signedTransaction({
             fromPrivateKey: formData.fromPrivateKey,
             to: formData.to,
             amount: formData.amount,

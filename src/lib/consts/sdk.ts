@@ -6,4 +6,4 @@ export enum Chains {
   Tron = 'TRON',
 }
 
-export const SDKOptions = { apiKey: process.env.TATUM_API_KEY ?? '' };
+export const SDKOptions = { apiKey: process.env.TATUM_API_KEY || '' };
